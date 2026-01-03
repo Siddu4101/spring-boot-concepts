@@ -4,7 +4,9 @@ import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.learning.mailSending.dtos.GroupByKeysForTable;
 import org.learning.mailSending.dtos.MailProps;
+import org.learning.mailSending.dtos.TableContent;
 import org.learning.mailSending.service.MailSenderService;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -12,6 +14,15 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.time.LocalDate;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @Service
@@ -39,6 +50,10 @@ public class MailSenderServiceImpl implements MailSenderService {
         /*dynamic var in template*/
         Context context = new Context();
         context.setVariable("body", mailProps.body());
+        context.setVariable("pricingDates", List.of(LocalDate.of(2024, 6, 1), LocalDate.of(2024, 6, 2), LocalDate.of(2024, 6, 3), LocalDate.of(2024, 6, 4)));
+        Map<GroupByKeysForTable, Map<LocalDate, Integer>> tableContent =  getTableData().stream()
+                .collect(Collectors.groupingBy(x -> new GroupByKeysForTable(x.calculator(), x.commandName()), Collectors.toMap(TableContent::pricingDate, TableContent::productCount)));
+        context.setVariable("tableContent",tableContent.entrySet().stream().sorted(Map.Entry.comparingByKey(Comparator.comparing(GroupByKeysForTable::calculator).thenComparing(GroupByKeysForTable::commandName))));
 
         String htmlMessage = templateEngine.process("emailTemplate", context);
 
@@ -52,5 +67,41 @@ public class MailSenderServiceImpl implements MailSenderService {
         /*u can add attachments to this*/
         javaMailSender.send(message);
     }
+
+    public static List<TableContent> getTableData() {
+        List<TableContent> tableContents = List.of(
+                new TableContent("HWFXO", "CommandA", 10, LocalDate.of(2024, 6, 1)),
+                new TableContent("HIGHWAY", "CommandB", 15, LocalDate.of(2024, 6, 1)),
+                new TableContent("RISKONE", "CommandC", 20, LocalDate.of(2024, 6, 1)),
+                new TableContent("HWFXO", "CommandD", 10, LocalDate.of(2024, 6, 1)),
+                new TableContent("HIGHWAY", "CommandE", 15, LocalDate.of(2024, 6, 1)),
+                new TableContent("RISKONE", "CommandF", 20, LocalDate.of(2024, 6, 1)),
+
+                new TableContent("HWFXO", "CommandA", 12, LocalDate.of(2024, 6, 2)),
+                new TableContent("HIGHWAY", "CommandB", 18, LocalDate.of(2024, 6, 2)),
+                new TableContent("RISKONE", "CommandC", 22, LocalDate.of(2024, 6, 2)),
+                new TableContent("HWFXO", "CommandD", 12, LocalDate.of(2024, 6, 2)),
+                new TableContent("HIGHWAY", "CommandE", 18, LocalDate.of(2024, 6, 2)),
+                new TableContent("RISKONE", "CommandF", 22, LocalDate.of(2024, 6, 2)),
+
+                new TableContent("HWFXO", "CommandA", 14, LocalDate.of(2024, 6, 3)),
+                new TableContent("HIGHWAY", "CommandB", 16, LocalDate.of(2024, 6, 3)),
+                new TableContent("RISKONE", "CommandC", 24, LocalDate.of(2024, 6, 3)),
+                new TableContent("HWFXO", "CommandD", 14, LocalDate.of(2024, 6, 3)),
+                new TableContent("HIGHWAY", "CommandE", 16, LocalDate.of(2024, 6, 3)),
+                new TableContent("RISKONE", "CommandF", 24, LocalDate.of(2024, 6, 3)),
+
+
+                new TableContent("HWFXO", "CommandA", 11, LocalDate.of(2024, 6, 4)),
+                new TableContent("HIGHWAY", "CommandB", 19, LocalDate.of(2024, 6, 4)),
+                new TableContent("RISKONE", "CommandC", 21, LocalDate.of(2024, 6, 4)),
+                new TableContent("HWFXO", "CommandD", 11, LocalDate.of(2024, 6, 4)),
+                new TableContent("HIGHWAY", "CommandE", 19, LocalDate.of(2024, 6, 4)),
+                new TableContent("RISKONE", "CommandF", 21, LocalDate.of(2024, 6, 4))
+
+        );
+        return tableContents;
+    }
+
 
 }
