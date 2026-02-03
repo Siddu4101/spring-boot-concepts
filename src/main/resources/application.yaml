@@ -1,3 +1,15 @@
 spring:
   application:
     name: spring-boot-concepts
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: qdubeh1@gmail.com
+    password: ${EMAIL_PASSWORD} # this password must be the password generated for the app from the App passwords not the gmail pass
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true

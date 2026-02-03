@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Email</title>
+</head>
+<body>
+<h2>Hello <span> Sid</span>,</h2>
+
+<p>
+    Welcome to <b>learning how send mail with html template</b>.
+</p>
+
+<p>
+    <b th:text="${body}">default body</b>
+
+<table border="1px">
+    <thead>
+    <tr>
+        <th>Calculator</th>
+        <th>Command Name</th>
+
+        <!-- Dynamic date columns -->
+        <th th:each="date : ${pricingDates}"
+            th:text="${#temporals.format(date, 'yyyy-MM-dd')}">
+            Date
+        </th>
+    </tr>
+    </thead>
+
+    <tbody>
+    <!-- Iterate over map entries -->
+    <tr th:each="entry : ${tableContent}">
+        <td th:text="${entry.key.calculator}">Calculator</td>
+        <td th:text="${entry.key.commandName}">Command</td>
+
+        <td th:each="date : ${pricingDates}"
+            th:text="${entry.value.get(date) != null ? entry.value.get(date) : 0}">
+            0
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+
+</p>
+
+<br>
+<p>Regards,<br/>Team</p>
+</body>
+</html>
