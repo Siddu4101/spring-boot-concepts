@@ -17,5 +17,5 @@
 
 1. [**Dependency Injection**](spring/dependencyInjection/README.md)
 2. [**IoC (Inversion of Control)**](spring/ioc/README.md)
-3. [**Spring Boot Overview**](springboot/README.md)
+3. [**Spring Boot Overview**](springboot/overview/README.md)
 </details>
